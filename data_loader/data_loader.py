@@ -15,7 +15,8 @@ class DataLoader:
         label = data[data.columns[-1]]
 
         std_scaler = StandardScaler()
-        std_data_ = std_scaler.fit_transform(data.drop(data.columns[-1], axis=1))
+        std_data_ = std_scaler.fit_transform(
+            data.drop(data.columns[-1], axis=1))
 
         std_data = pd.DataFrame(std_data_)
         std_data['class'] = label
@@ -46,13 +47,11 @@ class DataLoader:
         if self.__data.shape[1] > 3:
             data_2d = self.__reduce_dimensionality(self.__data)
         else:
-            data_2d = self.__data
+            data_2d = self.__standardize_data(self.__data)
 
-        data_2d_std = self.__standardize_data(data_2d)
-        data_2d_std.columns = ['first dimension', 'second dimension', 'class']
-        del data_2d
+        data_2d.columns = ['first dimension', 'second dimension', 'class']
 
-        return data_2d_std
+        return data_2d
 
     def display_dataset(self):
         print(f'{self.__dataset_name} dataset')
@@ -64,7 +63,7 @@ class DataLoader:
             print(self.__data)
 
     def get_data(self):
-        labels = np.array(self.__data[self.__data_2d.columns[-1]].values)
+        labels = np.array(self.__data[self.__data.columns[-1]].values)
         coordinates = self.__data[self.__data.columns[:-1]].values
 
         return coordinates, labels

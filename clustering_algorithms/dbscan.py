@@ -9,7 +9,7 @@ from visualizer import Visualizer
 
 
 class DBSCAN(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, epsilon=2, min_points=5) -> None:
+    def __init__(self, coordinates, labels, epsilon=0.5, min_points=5) -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
@@ -40,31 +40,25 @@ class DBSCAN(ClusteringAlgorithm):
         return neighbours
 
     def __expand_cluster(self, initial_point_index, neighbours, cluster_index):
-        cluster = np.array([initial_point_index], dtype=int)
-
-        if self.__predicted_labels[initial_point_index] != -2:
-            return cluster
-
-        self.__predicted_labels[initial_point_index] = cluster_index
-
         for neighbour in neighbours[initial_point_index]:
-            if self.__predicted_labels[neighbour] == -2:
+            if self.__predicted_labels[neighbour] == -1:
                 self.__predicted_labels[neighbour] = cluster_index
+                continue 
 
-                neighbours[neighbour] = self.__get_neighbours(neighbour)
+            if self.__predicted_labels[neighbour] != -2:
+                continue 
+            
+            neighbours[neighbour] = self.__get_neighbours(neighbour)
+            self.__predicted_labels[neighbour] = cluster_index
 
-                if neighbours[neighbour].size < self.__min_points:
-                    cluster = np.append(cluster, neighbour)
-                else:
-                    expanded_cluster = self.__expand_cluster(
-                        neighbour, neighbours, cluster_index)
-                    cluster = np.concatenate(
-                        (cluster, expanded_cluster), axis=None)
+            if neighbours[neighbour].size < self.__min_points:
+                continue
 
-        return cluster
+            else:
+                self.__expand_cluster(neighbour, neighbours, cluster_index)
 
-    def fit(self):
-        clusters = []
+
+    def fit_transform(self):
         cluster_index = -1
         neighbours = {}
 
@@ -79,37 +73,28 @@ class DBSCAN(ClusteringAlgorithm):
                 continue
 
             cluster_index += 1
-            cluster = self.__expand_cluster(
-                index, neighbours, cluster_index)
-            clusters.append(cluster)
+            self.__predicted_labels[index] = cluster_index
+            self.__expand_cluster(index, neighbours, cluster_index)
 
+    def score(self, scorer):
+        return super().score(scorer)
 
     @property
     def predicted_labels(self):
         return self.__predicted_labels
 
-    def transform(self):
-        return super().transform()
-
-    def fit_transform(self):
-        return super().fit_transform()
-
-    def score(self, scorer):
-        return super().score(scorer)
-
 
 def main():
     # load data
-    data_loader = DataLoader('iris')
+    data_loader = DataLoader('smile')
 
     # fit DBSCAN
     dbscan = DBSCAN(*data_loader.get_data())
-    dbscan.fit()
+    dbscan.fit_transform()
 
     # visualize initial 2D data and predictions
     Visualizer.plot_dataset_2d(data_loader.data_2d, data_loader.dataset_name)
-    Visualizer.plot_prediction_dataset_2d(data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
-
+    Visualizer.plot_predictions_dataset_2d(data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
 
 if __name__ == '__main__':
     main()
