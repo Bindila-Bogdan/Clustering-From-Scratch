@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from sklearn.decomposition import PCA
@@ -7,7 +8,8 @@ from sklearn.preprocessing import StandardScaler
 class DataLoader:
     def __init__(self, dataset_name) -> None:
         self.__dataset_name = dataset_name
-        self.__data, self.__data_2d = self.__load_data()
+        self.__data = self.__load_data()
+        self.__data_2d = self.__prepare_data()
 
     def __standardize_data(self, data):
         std_scaler = StandardScaler()
@@ -34,14 +36,17 @@ class DataLoader:
         data = pd.read_csv(data_path, low_memory=False, index_col=0)
         data = data.reset_index()
 
-        if data.shape[1] > 3:
-            data_2d = self.__reduce_dimensionality(data)
+        return data
+
+    def __prepare_data(self):
+        if self.__data.shape[1] > 3:
+            data_2d = self.__reduce_dimensionality(self.__data)
         else:
-            data_2d = data
+            data_2d = self.__data
 
         data_2d.columns = ['first dimension', 'second dimension', 'class']
 
-        return data, data_2d
+        return data_2d
 
     def display_dataset(self):
         print(f'{self.__dataset_name} dataset')
@@ -63,12 +68,8 @@ class DataLoader:
         fig.update_coloraxes(showscale=False)
         fig.show()
 
+    def get_data(self):
+        labels = np.array(self.__data[self.__data_2d.columns[-1]].values)
+        coordinates = self.__data[self.__data.columns[:-1]].values
 
-def main():
-    data_loader = DataLoader('mnist')
-    data_loader.display_dataset()
-    data_loader.plot_dataset_2d()
-
-
-if __name__ == '__main__':
-    main()
+        return coordinates, labels
