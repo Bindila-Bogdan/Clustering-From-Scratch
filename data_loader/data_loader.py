@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 
 class DataLoader:
@@ -8,15 +9,23 @@ class DataLoader:
         self.__dataset_name = dataset_name
         self.__data, self.__data_2d = self.__load_data()
 
+    def __standardize_data(self, data):
+        std_scaler = StandardScaler()
+        std_data = std_scaler.fit_transform(data)
+
+        return std_data
+
     def __reduce_dimensionality(self, data):
         label = data[data.columns[-1]]
 
         pca = PCA(n_components=2)
         reduced_data_ = pca.fit_transform(data.drop(data.columns[-1], axis=1))
-
-        reduced_data = pd.DataFrame(reduced_data_)
-        reduced_data['class'] = label
+        reduced_std_data_ = self.__standardize_data(reduced_data_)
         del reduced_data_
+
+        reduced_data = pd.DataFrame(reduced_std_data_)
+        reduced_data['class'] = label
+        del reduced_std_data_
 
         return reduced_data
 
@@ -53,3 +62,13 @@ class DataLoader:
                          color='class', symbol='class', title=title)
         fig.update_coloraxes(showscale=False)
         fig.show()
+
+
+def main():
+    data_loader = DataLoader('mnist')
+    data_loader.display_dataset()
+    data_loader.plot_dataset_2d()
+
+
+if __name__ == '__main__':
+    main()
