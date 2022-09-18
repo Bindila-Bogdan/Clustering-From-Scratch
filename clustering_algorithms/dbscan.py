@@ -1,13 +1,15 @@
 import sys
 import numpy as np
 sys.path.append('../data_loader')
+sys.path.append('../data_visualization')
 
 from clustering_algorithm import ClusteringAlgorithm
 from data_loader import DataLoader
+from visualizer import Visualizer
 
 
 class DBSCAN(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, epsilon=0.5, min_points=5) -> None:
+    def __init__(self, coordinates, labels, epsilon=2, min_points=5) -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
@@ -81,10 +83,9 @@ class DBSCAN(ClusteringAlgorithm):
                 index, neighbours, cluster_index)
             clusters.append(cluster)
 
-        print(clusters)
 
-    
-    def get_predicted_labels(self):
+    @property
+    def predicted_labels(self):
         return self.__predicted_labels
 
     def transform(self):
@@ -98,11 +99,16 @@ class DBSCAN(ClusteringAlgorithm):
 
 
 def main():
+    # load data
     data_loader = DataLoader('iris')
-    coordinates, lables = data_loader.get_data()
-    dbscan = DBSCAN(coordinates, lables)
+
+    # fit DBSCAN
+    dbscan = DBSCAN(*data_loader.get_data())
     dbscan.fit()
-    print(dbscan.get_predicted_labels())
+
+    # visualize initial 2D data and predictions
+    Visualizer.plot_dataset_2d(data_loader.data_2d, data_loader.dataset_name)
+    Visualizer.plot_prediction_dataset_2d(data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
 
 
 if __name__ == '__main__':

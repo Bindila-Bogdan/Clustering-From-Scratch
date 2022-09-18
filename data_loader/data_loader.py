@@ -63,20 +63,16 @@ class DataLoader:
         else:
             print(self.__data)
 
-    def plot_dataset_2d(self):
-        if self.__data.shape[1] > 3:
-            title = f'2D representation of {self.__dataset_name.capitalize()} dataset'
-        else:
-            title = f'{self.__dataset_name.capitalize()} dataset'
-
-        print(self.__data_2d)
-        fig = px.scatter(self.__data_2d, x='first dimension', y='second dimension',
-                         color='class', symbol='class', title=title, color_discrete_sequence= px.colors.sequential.Purples_r)
-        fig.update_coloraxes(showscale=False)
-        fig.show()
-
     def get_data(self):
         labels = np.array(self.__data[self.__data_2d.columns[-1]].values)
         coordinates = self.__data[self.__data.columns[:-1]].values
 
         return coordinates, labels
+
+    @property
+    def data_2d(self):
+        return self.__data_2d
+
+    @property
+    def dataset_name(self):
+        return self.__dataset_name
