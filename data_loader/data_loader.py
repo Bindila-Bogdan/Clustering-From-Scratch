@@ -8,12 +8,18 @@ from sklearn.preprocessing import StandardScaler
 class DataLoader:
     def __init__(self, dataset_name) -> None:
         self.__dataset_name = dataset_name
-        self.__data = self.__load_data()
+        self.__data = self.__standardize_data(self.__load_data())
         self.__data_2d = self.__prepare_data()
 
     def __standardize_data(self, data):
+        label = data[data.columns[-1]]
+
         std_scaler = StandardScaler()
-        std_data = std_scaler.fit_transform(data)
+        std_data_ = std_scaler.fit_transform(data.drop(data.columns[-1], axis=1))
+
+        std_data = pd.DataFrame(std_data_)
+        std_data['class'] = label
+        del std_data_
 
         return std_data
 
@@ -22,12 +28,10 @@ class DataLoader:
 
         pca = PCA(n_components=2)
         reduced_data_ = pca.fit_transform(data.drop(data.columns[-1], axis=1))
-        reduced_std_data_ = self.__standardize_data(reduced_data_)
-        del reduced_data_
 
-        reduced_data = pd.DataFrame(reduced_std_data_)
+        reduced_data = pd.DataFrame(reduced_data_)
         reduced_data['class'] = label
-        del reduced_std_data_
+        del reduced_data_
 
         return reduced_data
 
@@ -44,9 +48,11 @@ class DataLoader:
         else:
             data_2d = self.__data
 
-        data_2d.columns = ['first dimension', 'second dimension', 'class']
+        data_2d_std = self.__standardize_data(data_2d)
+        data_2d_std.columns = ['first dimension', 'second dimension', 'class']
+        del data_2d
 
-        return data_2d
+        return data_2d_std
 
     def display_dataset(self):
         print(f'{self.__dataset_name} dataset')
@@ -63,8 +69,9 @@ class DataLoader:
         else:
             title = f'{self.__dataset_name.capitalize()} dataset'
 
+        print(self.__data_2d)
         fig = px.scatter(self.__data_2d, x='first dimension', y='second dimension',
-                         color='class', symbol='class', title=title)
+                         color='class', symbol='class', title=title, color_discrete_sequence= px.colors.sequential.Purples_r)
         fig.update_coloraxes(showscale=False)
         fig.show()
 
