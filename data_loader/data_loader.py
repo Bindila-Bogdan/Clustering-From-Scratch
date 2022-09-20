@@ -62,7 +62,8 @@ class DataLoader:
         else:
             print(self.__data)
 
-    def get_data(self):
+    @property
+    def data(self):
         labels = np.array(self.__data[self.__data.columns[-1]].values)
         coordinates = self.__data[self.__data.columns[:-1]].values
 

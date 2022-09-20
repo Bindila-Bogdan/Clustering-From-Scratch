@@ -86,10 +86,10 @@ class DBSCAN(ClusteringAlgorithm):
 
 def main():
     # load data
-    data_loader = DataLoader('smile')
+    data_loader = DataLoader('spiral')
 
     # fit DBSCAN
-    dbscan = DBSCAN(*data_loader.get_data())
+    dbscan = DBSCAN(*data_loader.data)
     dbscan.fit_transform()
 
     # visualize initial 2D data and predictions
