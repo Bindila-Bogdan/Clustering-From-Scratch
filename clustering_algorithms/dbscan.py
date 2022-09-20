@@ -1,7 +1,4 @@
-import sys
 import numpy as np
-sys.path.append('../data_loader')
-sys.path.append('../data_visualization')
 
 from clustering_algorithm import ClusteringAlgorithm
 from data_loader import DataLoader
@@ -17,22 +14,15 @@ class DBSCAN(ClusteringAlgorithm):
         self.__min_points = min_points
         self.__predicted_labels = np.full(len(self.__labels), -2)
 
-    def __compute_euclidean_dist(self, point_a, point_b):
-        diff = point_a - point_b
-        sum_of_squares = np.dot(diff.T, diff)
-        euclidean_dist = np.sqrt(sum_of_squares)
-
-        return euclidean_dist
-
     def __get_neighbours(self, current_index):
         neighbours = np.array([], dtype=int)
         point = self.__coordinates[current_index]
 
-        for i in range(self.__labels.size):
+        for i in range(self.__labels.shape[0]):
             if i == current_index:
                 continue
 
-            dist = self.__compute_euclidean_dist(point, self.__coordinates[i])
+            dist = super().compute_euclidean_dist(point, self.__coordinates[i])
 
             if dist < self.__epsilon:
                 neighbours = np.append(neighbours, i)
@@ -43,32 +33,31 @@ class DBSCAN(ClusteringAlgorithm):
         for neighbour in neighbours[initial_point_index]:
             if self.__predicted_labels[neighbour] == -1:
                 self.__predicted_labels[neighbour] = cluster_index
-                continue 
+                continue
 
             if self.__predicted_labels[neighbour] != -2:
-                continue 
-            
+                continue
+
             neighbours[neighbour] = self.__get_neighbours(neighbour)
             self.__predicted_labels[neighbour] = cluster_index
 
-            if neighbours[neighbour].size < self.__min_points:
+            if neighbours[neighbour].shape[0] < self.__min_points:
                 continue
 
             else:
                 self.__expand_cluster(neighbour, neighbours, cluster_index)
 
-
     def fit_transform(self):
         cluster_index = -1
         neighbours = {}
 
-        for index in range(self.__predicted_labels.size):
+        for index in range(self.__predicted_labels.shape[0]):
             if self.__predicted_labels[index] != -2:
                 continue
 
             neighbours[index] = self.__get_neighbours(index)
 
-            if neighbours[index].size < self.__min_points:
+            if neighbours[index].shape[0] < self.__min_points:
                 self.__predicted_labels[index] = -1
                 continue
 
@@ -94,7 +83,9 @@ def main():
 
     # visualize initial 2D data and predictions
     Visualizer.plot_dataset_2d(data_loader.data_2d, data_loader.dataset_name)
-    Visualizer.plot_predictions_dataset_2d(data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
+    Visualizer.plot_predictions_dataset_2d(
+        data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
+
 
 if __name__ == '__main__':
     main()

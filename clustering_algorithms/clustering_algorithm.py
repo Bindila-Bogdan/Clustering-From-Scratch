@@ -1,4 +1,9 @@
 from abc import ABC, abstractmethod
+import sys
+import numpy as np
+sys.path.append('../data_loader')
+sys.path.append('../data_visualization')
+
 
 class ClusteringAlgorithm(ABC):
     @abstractmethod
@@ -9,3 +14,10 @@ class ClusteringAlgorithm(ABC):
     @abstractmethod
     def score(self, scorer):
         pass
+
+    def compute_euclidean_dist(self, point_a, point_b):
+        diff = point_a - point_b
+        sum_of_squares = np.dot(diff.T, diff)
+        euclidean_dist = np.sqrt(sum_of_squares)
+
+        return euclidean_dist

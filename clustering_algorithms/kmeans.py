@@ -1,0 +1,105 @@
+import numpy as np
+from copy import deepcopy
+import sys
+
+from clustering_algorithm import ClusteringAlgorithm
+from data_loader import DataLoader
+from visualizer import Visualizer
+
+
+class KMeans(ClusteringAlgorithm):
+    def __init__(self, coordinates, labels, n_init=10, n_clusters=10, max_iter=100) -> None:
+        super().__init__()
+        self.__coordinates = coordinates
+        self.__labels = labels
+        self.__n_init = n_init
+        self.__n_clusters = n_clusters
+        self.__max_iters = max_iter
+        self.__predicted_labels = np.full(len(self.__labels), -1)
+
+    def __kmeans_initialization(self):
+        coordinates = deepcopy(self.__coordinates)
+        first_index = np.random.choice(coordinates.shape[0])
+
+        centroids = [coordinates[first_index, :]]
+        coordinates = np.delete(coordinates, first_index, axis=0)
+
+        while len(centroids) < self.__n_clusters:
+            dist_distrib = []
+
+            for i in range(coordinates.shape[0]):
+                min_dist = sys.maxsize
+
+                for centroid in centroids:
+                    min_dist = min(
+                        min_dist, super().compute_euclidean_dist(coordinates[i, :], centroid))
+
+                dist_distrib.append(min_dist)
+
+            distrib_sum = sum(dist_distrib)
+            dist_distrib /= distrib_sum
+
+            centroid_index = np.random.choice(
+                coordinates.shape[0], p=dist_distrib)
+            centroids.append(coordinates[centroid_index, :])
+            coordinates = np.delete(coordinates, centroid_index, axis=0)
+
+        return centroids
+
+    def fit_transform(self):
+        prev_centroids = self.__kmeans_initialization()
+        iter_no = 0
+
+        while iter_no < self.__max_iters:
+            points_class = []
+
+            for point_index in range(self.__coordinates.shape[0]):
+                min_dist = sys.maxsize
+                closest_centroid_index = None
+
+                for centorid_index, centroid in enumerate(prev_centroids):
+                    dist = super().compute_euclidean_dist(
+                        self.__coordinates[point_index, :], centroid)
+                    if dist < min_dist:
+                        min_dist = dist
+                        closest_centroid_index = centorid_index
+
+                points_class.append(closest_centroid_index)
+
+            new_centroids = []
+
+            for class_value in range(max(points_class) + 1):
+                points_in_class = []
+
+                for index in range(len(points_class)):
+                    if points_class[index] == class_value:
+                        points_in_class.append(self.__coordinates[index])
+
+                new_centroids.append(np.sum(np.array(points_in_class), axis=0))
+                prev_centroids = new_centroids
+
+            iter_no += 1
+
+        self.__predicted_labels = points_class
+
+    def score(self, scorer):
+        return super().score(scorer)
+
+    @property
+    def predicted_labels(self):
+        return self.__predicted_labels
+
+
+def main():
+    data_loader = DataLoader('iris')
+
+    kmeans = KMeans(*data_loader.data)
+    kmeans.fit_transform()
+
+    Visualizer.plot_dataset_2d(data_loader.data_2d, data_loader.dataset_name)
+    Visualizer.plot_predictions_dataset_2d(
+        data_loader.data_2d, data_loader.dataset_name, kmeans.predicted_labels)
+
+
+if __name__ == '__main__':
+    main()
