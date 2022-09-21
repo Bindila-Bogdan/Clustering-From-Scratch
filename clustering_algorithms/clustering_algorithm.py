@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-import sys
 import numpy as np
-sys.path.append('../data_loader')
+import sys
+from abc import ABC, abstractmethod
+sys.path.append('../data_preprocessing')
 sys.path.append('../data_visualization')
 
 
