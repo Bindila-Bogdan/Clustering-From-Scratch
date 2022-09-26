@@ -26,9 +26,15 @@ class Visualizer:
         fig.show()
 
     @classmethod
-    def plot_kmeans_evolution(cls, clusters_evolution):
-        title = 'Kmeans evolution'
+    def plot_custering_evolution(cls, clusters_evolution, title):
+        classes = set(clusters_evolution['class'].values)
+
         fig = px.scatter(clusters_evolution, x="first dimension", y="second dimension", title=title,
-                         animation_frame="iteration", color='class', color_continuous_scale=cls.colors)
-        fig.update_coloraxes(showscale=False)
+                         animation_frame="iteration", color='class', color_discrete_map=dict(zip(classes, cls.colors)))
+        #fig.update_coloraxes(showscale=False)
+
+        iter_no = clusters_evolution['iteration'].max()
+        fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 10000 // (iter_no + 1)
+        fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 1000 // (iter_no + 1)
+
         fig.show()

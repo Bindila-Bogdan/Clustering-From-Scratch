@@ -3,16 +3,19 @@ import numpy as np
 from clustering_algorithm import ClusteringAlgorithm
 from data_loader import DataLoader
 from visualizer import Visualizer
+from data_viz_preparation import DataVizPreparation
+
 
 
 class DBSCAN(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, epsilon=0.5, min_points=5) -> None:
+    def __init__(self, coordinates, labels, epsilon=0.5, min_points=3) -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
         self.__epsilon = epsilon
         self.__min_points = min_points
         self.__predicted_labels = np.full(len(self.__labels), -2)
+        self.__labels_evolution = []
 
     def __get_neighbours(self, current_index):
         neighbours = np.array([], dtype=int)
@@ -33,6 +36,7 @@ class DBSCAN(ClusteringAlgorithm):
         for neighbour in neighbours[initial_point_index]:
             if self.__predicted_labels[neighbour] == -1:
                 self.__predicted_labels[neighbour] = cluster_index
+                self.__labels_evolution.append(list(self.__predicted_labels))
                 continue
 
             if self.__predicted_labels[neighbour] != -2:
@@ -40,6 +44,7 @@ class DBSCAN(ClusteringAlgorithm):
 
             neighbours[neighbour] = self.__get_neighbours(neighbour)
             self.__predicted_labels[neighbour] = cluster_index
+            self.__labels_evolution.append(list(self.__predicted_labels))
 
             if neighbours[neighbour].shape[0] < self.__min_points:
                 continue
@@ -59,10 +64,12 @@ class DBSCAN(ClusteringAlgorithm):
 
             if neighbours[index].shape[0] < self.__min_points:
                 self.__predicted_labels[index] = -1
+                self.__labels_evolution.append(list(self.__predicted_labels))
                 continue
 
             cluster_index += 1
             self.__predicted_labels[index] = cluster_index
+            self.__labels_evolution.append(list(self.__predicted_labels))
             self.__expand_cluster(index, neighbours, cluster_index)
 
     def score(self, scorer):
@@ -72,19 +79,23 @@ class DBSCAN(ClusteringAlgorithm):
     def predicted_labels(self):
         return self.__predicted_labels
 
+    @property
+    def labels_evolution(self):
+        return self.__labels_evolution
+
 
 def main():
     # load data
-    data_loader = DataLoader('spiral')
+    data_loader = DataLoader('iris')
 
     # fit DBSCAN
     dbscan = DBSCAN(*data_loader.data)
     dbscan.fit_transform()
 
-    # visualize initial 2D data and predictions
-    Visualizer.plot_dataset_2d(data_loader.data_2d, data_loader.dataset_name)
-    Visualizer.plot_predictions_dataset_2d(
-        data_loader.data_2d, data_loader.dataset_name, dbscan.predicted_labels)
+    # visualize KMeans evolution
+    clusters_evolution = DataVizPreparation.prepare_viz(
+        dbscan, data_loader.data_2d)
+    Visualizer.plot_custering_evolution(clusters_evolution, 'DBSCAN evolution')
 
 
 if __name__ == '__main__':

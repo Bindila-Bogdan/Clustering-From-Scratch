@@ -112,9 +112,9 @@ def main():
     kmeans.fit_transform()
 
     # visualize KMeans evolution
-    clusters_evolution = DataVizPreparation.prepare_kmeans_viz(
+    clusters_evolution = DataVizPreparation.prepare_viz(
         kmeans, data_loader.data_2d)
-    Visualizer.plot_kmeans_evolution(clusters_evolution)
+    Visualizer.plot_custering_evolution(clusters_evolution, 'Kmeans evolution')
 
 
 if __name__ == '__main__':
