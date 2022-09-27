@@ -1,5 +1,6 @@
 from dbscan import DBSCAN
 from kmeans import KMeans
+from agglomerative import Agglomerative
 from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
@@ -19,12 +20,15 @@ class Clustering:
             algorithm = KMeans(*self.__data_loader.data)
         elif self.__algorithm_name == 'dbscan':
             algorithm = DBSCAN(*self.__data_loader.data)
+        elif self.__algorithm_name == 'agglomerative':
+            algorithm = Agglomerative(*self.__data_loader.data)
         else:
             raise NameError('clustering algorithm not found')
 
         return algorithm
 
     def train(self):
+        print(f'Training {self.__algorithm_name}...')
         self.__algorithm.fit_transform()
 
     def visualize_result(self):
@@ -35,9 +39,9 @@ class Clustering:
 
 
 def main():
-    clustering = Clustering('smile', 'kmeans')
+    clustering = Clustering('smile', 'agglomerative')
     clustering.train()
-    clustering.visualize_result()
+    # clustering.visualize_result()
 
 
 if __name__ == '__main__':
