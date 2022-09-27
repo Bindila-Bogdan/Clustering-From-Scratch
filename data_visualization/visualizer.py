@@ -1,4 +1,7 @@
 import plotly.express as px
+from matplotlib import pyplot as plt
+import seaborn as sns; sns.set()
+from scipy.cluster.hierarchy import dendrogram
 
 
 class Visualizer:
@@ -31,10 +34,21 @@ class Visualizer:
 
         fig = px.scatter(clusters_evolution, x="first dimension", y="second dimension", title=title,
                          animation_frame="iteration", color='class', color_discrete_map=dict(zip(classes, cls.colors)))
-        #fig.update_coloraxes(showscale=False)
+        # fig.update_coloraxes(showscale=False)
 
         iter_no = clusters_evolution['iteration'].max()
-        fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 10000 // (iter_no + 1)
-        fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 1000 // (iter_no + 1)
+        fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 10000 // (
+            iter_no + 1)
+        fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 1000 // (
+            iter_no + 1)
 
         fig.show()
+
+    @classmethod
+    def plot_dendrogram(cls, linkage_matrix, dataset_name):
+        fig, ax = plt.subplots(1, 1)
+        dendrogram(linkage_matrix, ax=ax)
+        ax.set_xlabel('indices of points')
+        ax.set_ylabel('distances between clusters')
+        ax.set_title(f'Dendrogram of {dataset_name} data set')
+        plt.show()

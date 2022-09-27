@@ -9,20 +9,18 @@ class Agglomerative(ClusteringAlgorithm):
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
-        self.__predicted_labels = list(range(len(self.__labels)))
-        self.__labels_evolution = []
         self.__clusters = [[i] for i in list(range(len(self.__labels)))]
+        self.__linkage_matrix = []
+        self.__linkage_matrix_indices = list(range(len(self.__labels)))
         self.__centroids = []
-
 
     def __compute_centroids(self):
         self.__centroids = []
 
         for cluster in self.__clusters:
-            centroid = np.array([self.__coordinates[i] for i in cluster]).mean(axis=0)
-            print(centroid)
+            centroid = np.array([self.__coordinates[i]
+                                for i in cluster]).mean(axis=0)
             self.__centroids.append(centroid)
-
 
     def __get_closest_clusters(self):
         closest_clusters = [None, None]
@@ -32,7 +30,7 @@ class Agglomerative(ClusteringAlgorithm):
             for j in range(len(self.__clusters)):
                 if i == j:
                     continue
-            
+
                 centorid_i = self.__centroids[i]
                 centroid_j = self.__centroids[j]
                 dist = super().compute_euclidean_dist(centorid_i, centroid_j)
@@ -40,12 +38,34 @@ class Agglomerative(ClusteringAlgorithm):
                     min_dist = dist
                     closest_clusters = [i, j]
 
-        return closest_clusters
+        return closest_clusters, min_dist
+
+    def __merge_clusters(self, closest_clusters, min_dist):
+        i = closest_clusters[0]
+        j = closest_clusters[1]
+
+        linkage_i = self.__linkage_matrix_indices[i]
+        linkage_j = self.__linkage_matrix_indices[j]
+        new_cluster_size = len(self.__clusters[i]) + len(self.__clusters[j])
+        linkage_entry = [linkage_i, linkage_j, min_dist, new_cluster_size]
+
+        self.__linkage_matrix.append(linkage_entry)
+        self.__clusters[i].extend(self.__clusters[j])
+        self.__clusters.pop(j)
+
+        max_linkage_index = max(self.__linkage_matrix_indices) + 1
+        self.__linkage_matrix_indices[i] = max_linkage_index
+        self.__linkage_matrix_indices.pop(j)
 
     def fit_transform(self):
-        self.__compute_centroids()
-        print(self.__centroids)
-        closest_clusters = self.__get_closest_clusters()
+        while len(self.__clusters) != 1:
+            self.__compute_centroids()
+            closest_clusters, min_dist = self.__get_closest_clusters()
+            self.__merge_clusters(closest_clusters, min_dist)
 
     def score(self, scorer):
         return super().score(scorer)
+
+    @property
+    def linkage_matrix(self):
+        return np.array(self.__linkage_matrix)
