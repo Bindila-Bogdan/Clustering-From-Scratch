@@ -101,21 +101,3 @@ class KMeans(ClusteringAlgorithm):
     @property
     def labels_evolution(self):
         return self.__labels_evolution
-
-
-def main():
-    # load data
-    data_loader = DataLoader('iris')
-
-    # fit KMeans
-    kmeans = KMeans(*data_loader.data)
-    kmeans.fit_transform()
-
-    # visualize KMeans evolution
-    clusters_evolution = DataVizPreparation.prepare_viz(
-        kmeans, data_loader.data_2d)
-    Visualizer.plot_custering_evolution(clusters_evolution, 'Kmeans evolution')
-
-
-if __name__ == '__main__':
-    main()

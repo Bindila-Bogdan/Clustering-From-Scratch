@@ -6,7 +6,6 @@ from visualizer import Visualizer
 from data_viz_preparation import DataVizPreparation
 
 
-
 class DBSCAN(ClusteringAlgorithm):
     def __init__(self, coordinates, labels, epsilon=0.5, min_points=3) -> None:
         super().__init__()
@@ -82,21 +81,3 @@ class DBSCAN(ClusteringAlgorithm):
     @property
     def labels_evolution(self):
         return self.__labels_evolution
-
-
-def main():
-    # load data
-    data_loader = DataLoader('iris')
-
-    # fit DBSCAN
-    dbscan = DBSCAN(*data_loader.data)
-    dbscan.fit_transform()
-
-    # visualize KMeans evolution
-    clusters_evolution = DataVizPreparation.prepare_viz(
-        dbscan, data_loader.data_2d)
-    Visualizer.plot_custering_evolution(clusters_evolution, 'DBSCAN evolution')
-
-
-if __name__ == '__main__':
-    main()
