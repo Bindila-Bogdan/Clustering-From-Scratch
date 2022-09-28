@@ -1,5 +1,5 @@
-from fileinput import close
 import sys
+from copy import deepcopy
 import numpy as np
 from clustering_algorithm import ClusteringAlgorithm
 
@@ -13,6 +13,7 @@ class Agglomerative(ClusteringAlgorithm):
         self.__linkage_matrix = []
         self.__linkage_matrix_indices = list(range(len(self.__labels)))
         self.__centroids = []
+        self.__labels_evolution = [list(range(len(self.__coordinates)))]
 
     def __compute_centroids(self):
         self.__centroids = []
@@ -50,6 +51,15 @@ class Agglomerative(ClusteringAlgorithm):
         linkage_entry = [linkage_i, linkage_j, min_dist, new_cluster_size]
 
         self.__linkage_matrix.append(linkage_entry)
+
+        labels = deepcopy(self.__labels_evolution[-1])
+        color_cluster_i = labels[self.__clusters[i][0]]
+
+        for index in self.__clusters[j]:
+            labels[index] = color_cluster_i
+
+        self.__labels_evolution.append(labels)
+
         self.__clusters[i].extend(self.__clusters[j])
         self.__clusters.pop(j)
 
@@ -69,3 +79,7 @@ class Agglomerative(ClusteringAlgorithm):
     @property
     def linkage_matrix(self):
         return np.array(self.__linkage_matrix)
+
+    @property
+    def labels_evolution(self):
+        return self.__labels_evolution

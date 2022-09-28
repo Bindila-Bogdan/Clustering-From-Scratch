@@ -32,15 +32,16 @@ class Clustering:
         self.__algorithm.fit_transform()
 
     def visualize_result(self):
+        agglomerative = ('agglomerative' == self.__algorithm_name)
+        
+        clusters_evolution = DataVizPreparation.prepare_viz(
+            self.__algorithm, self.__data_loader.data_2d)
+        Visualizer.plot_custering_evolution(
+            clusters_evolution, f'{self.__algorithm_name} evolution', agglomerative)
+
         if self.__algorithm_name == 'agglomerative':
             Visualizer.plot_dendrogram(
                 self.__algorithm.linkage_matrix, self.__dataset_name)
-        else:
-            clusters_evolution = DataVizPreparation.prepare_viz(
-                self.__algorithm, self.__data_loader.data_2d)
-            Visualizer.plot_custering_evolution(
-                clusters_evolution, f'{self.__algorithm_name} evolution')
-
 
 def main():
     clustering = Clustering('iris', 'agglomerative')

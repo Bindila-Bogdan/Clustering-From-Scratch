@@ -1,7 +1,8 @@
+from scipy.cluster.hierarchy import dendrogram
 import plotly.express as px
 from matplotlib import pyplot as plt
-import seaborn as sns; sns.set()
-from scipy.cluster.hierarchy import dendrogram
+import seaborn as sns
+sns.set()
 
 
 class Visualizer:
@@ -29,12 +30,15 @@ class Visualizer:
         fig.show()
 
     @classmethod
-    def plot_custering_evolution(cls, clusters_evolution, title):
+    def plot_custering_evolution(cls, clusters_evolution, title, agglomerative=False):
         classes = set(clusters_evolution['class'].values)
 
-        fig = px.scatter(clusters_evolution, x="first dimension", y="second dimension", title=title,
-                         animation_frame="iteration", color='class', color_discrete_map=dict(zip(classes, cls.colors)))
-        # fig.update_coloraxes(showscale=False)
+        if agglomerative:
+            fig = px.scatter(clusters_evolution, x="first dimension", y="second dimension", title=title.capitalize(),
+                            animation_frame="iteration", color='class', color_continuous_scale=px.colors.cyclical.Twilight)
+        else:
+            fig = px.scatter(clusters_evolution, x="first dimension", y="second dimension", title=title,
+                animation_frame="iteration", color='class', color_discrete_map=dict(zip(classes, cls.colors)))
 
         iter_no = clusters_evolution['iteration'].max()
         fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 10000 // (
