@@ -1,6 +1,7 @@
 from dbscan import DBSCAN
 from kmeans import KMeans
 from agglomerative import Agglomerative
+from gaussian_mixture_model import GaussianMixtureModel
 from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
@@ -22,6 +23,8 @@ class Clustering:
             algorithm = DBSCAN(*self.__data_loader.data)
         elif self.__algorithm_name == 'agglomerative':
             algorithm = Agglomerative(*self.__data_loader.data)
+        elif self.__algorithm_name == 'gmm':
+            algorithm = GaussianMixtureModel(*self.__data_loader.data)
         else:
             raise NameError('clustering algorithm not found')
 
@@ -44,9 +47,9 @@ class Clustering:
                 self.__algorithm.linkage_matrix, self.__dataset_name)
 
 def main():
-    clustering = Clustering('iris', 'agglomerative')
+    clustering = Clustering('iris', 'gmm')
     clustering.train()
-    clustering.visualize_result()
+    #clustering.visualize_result()
 
 
 if __name__ == '__main__':
