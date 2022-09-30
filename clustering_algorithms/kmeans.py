@@ -10,7 +10,7 @@ from data_viz_preparation import DataVizPreparation
 
 
 class KMeans(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, n_clusters=3, max_iter=100) -> None:
+    def __init__(self, coordinates, labels, n_clusters=9, max_iter=100) -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
