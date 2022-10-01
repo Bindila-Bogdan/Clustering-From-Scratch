@@ -1,7 +1,6 @@
 from dbscan import DBSCAN
 from kmeans import KMeans
 from agglomerative import Agglomerative
-from gaussian_mixture import GaussianMixture
 from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
@@ -23,8 +22,6 @@ class Clustering:
             algorithm = DBSCAN(*self.__data_loader.data)
         elif self.__algorithm_name == 'agglomerative':
             algorithm = Agglomerative(*self.__data_loader.data)
-        elif self.__algorithm_name == 'gaussian mixture':
-            algorithm = GaussianMixture(*self.__data_loader.data)
         else:
             raise NameError('clustering algorithm not found')
 
@@ -40,19 +37,16 @@ class Clustering:
         clusters_evolution = DataVizPreparation.prepare_viz(
             self.__algorithm, self.__data_loader.data_2d)
         Visualizer.plot_custering_evolution(
-            clusters_evolution, f'{self.__algorithm_name.capitalize()} evolution', agglomerative)
+            clusters_evolution, f'{self.__algorithm_name} evolution', agglomerative)
 
         if self.__algorithm_name == 'agglomerative':
             Visualizer.plot_dendrogram(
                 self.__algorithm.linkage_matrix, self.__dataset_name)
 
 def main():
-    data_algorithms = [('kmeans', 'diamond'), ('dbscan', 'smile'), ('agglomerative', 'iris'), ('gaussian mixture', 'cure')]
-    
-    for algorithm, dataset_name in data_algorithms:
-        clustering = Clustering(dataset_name, algorithm)
-        clustering.train()
-        clustering.visualize_result()
+    clustering = Clustering('iris', 'agglomerative')
+    clustering.train()
+    clustering.visualize_result()
 
 
 if __name__ == '__main__':

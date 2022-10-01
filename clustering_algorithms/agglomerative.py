@@ -5,10 +5,11 @@ from clustering_algorithm import ClusteringAlgorithm
 
 
 class Agglomerative(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels) -> None:
+    def __init__(self, coordinates, labels, distance_type='euclidean') -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
+        self.__distance_type = distance_type
         self.__clusters = [[i] for i in list(range(len(self.__labels)))]
         self.__linkage_matrix = []
         self.__linkage_matrix_indices = list(range(len(self.__labels)))
@@ -34,7 +35,7 @@ class Agglomerative(ClusteringAlgorithm):
 
                 centorid_i = self.__centroids[i]
                 centroid_j = self.__centroids[j]
-                dist = super().compute_euclidean_dist(centorid_i, centroid_j)
+                dist = super().compute_dist(centorid_i, centroid_j, self.__distance_type)
                 if dist < min_dist:
                     min_dist = dist
                     closest_clusters = [i, j]

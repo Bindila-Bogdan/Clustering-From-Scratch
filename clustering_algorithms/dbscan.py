@@ -1,3 +1,4 @@
+from dis import dis
 import numpy as np
 
 from clustering_algorithm import ClusteringAlgorithm
@@ -7,12 +8,13 @@ from data_viz_preparation import DataVizPreparation
 
 
 class DBSCAN(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, epsilon=0.5, min_points=3) -> None:
+    def __init__(self, coordinates, labels, epsilon=0.5, min_points=3, distance_type='euclidean') -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
         self.__epsilon = epsilon
         self.__min_points = min_points
+        self.__distance_type = distance_type
         self.__predicted_labels = np.full(len(self.__labels), -2)
         self.__labels_evolution = []
 
@@ -24,7 +26,7 @@ class DBSCAN(ClusteringAlgorithm):
             if i == current_index:
                 continue
 
-            dist = super().compute_euclidean_dist(point, self.__coordinates[i])
+            dist = super().compute_dist(point, self.__coordinates[i], self.__distance_type)
 
             if dist < self.__epsilon:
                 neighbours = np.append(neighbours, i)

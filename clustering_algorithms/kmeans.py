@@ -10,12 +10,13 @@ from data_viz_preparation import DataVizPreparation
 
 
 class KMeans(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, n_clusters=9, max_iter=100) -> None:
+    def __init__(self, coordinates, labels, n_clusters=3, max_iter=100, distance_type='euclidean') -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
         self.__n_clusters = n_clusters
         self.__max_iters = max_iter
+        self.__distance_type = distance_type
         self.__predicted_labels = np.full(len(self.__labels), -1)
         self.__labels_evolution = []
 
@@ -34,7 +35,7 @@ class KMeans(ClusteringAlgorithm):
 
                 for centroid in centroids:
                     min_dist = min(
-                        min_dist, super().compute_euclidean_dist(coordinates[i, :], centroid))
+                        min_dist, super().compute_dist(coordinates[i, :], centroid), self.__distance_type)
 
                 dist_distrib.append(min_dist)
 
@@ -60,8 +61,8 @@ class KMeans(ClusteringAlgorithm):
                 closest_centroid_index = None
 
                 for centorid_index, centroid in enumerate(prev_centroids):
-                    dist = super().compute_euclidean_dist(
-                        self.__coordinates[point_index, :], centroid)
+                    dist = super().compute_dist(
+                        self.__coordinates[point_index, :], centroid, self.__distance_type)
                     if dist < min_dist:
                         min_dist = dist
                         closest_centroid_index = centorid_index
