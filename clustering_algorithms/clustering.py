@@ -6,15 +6,18 @@ from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
 from scorer import Scorer
-from optimizer import Optimizer
 
 
 class Clustering:
-    def __init__(self, dataset_name, algorithm_name) -> None:
+    def __init__(self, dataset_name, algorithm_name, algorithm=None) -> None:
         self.__dataset_name = dataset_name
         self.__data_loader = DataLoader(self.__dataset_name)
         self.__algorithm_name = algorithm_name
-        self.__algorithm = self.__get_algorithm()
+
+        if algorithm is not None:
+            self.__algorithm = algorithm
+        else:
+            self.__algorithm = self.__get_algorithm()
 
     def __get_algorithm(self):
         algorithm = None
@@ -38,7 +41,7 @@ class Clustering:
 
     def visualize_result(self):
         agglomerative = ('agglomerative' == self.__algorithm_name)
-        
+
         clusters_evolution = DataVizPreparation.prepare_viz(
             self.__algorithm, self.__data_loader.data_2d)
         Visualizer.plot_custering_evolution(
@@ -49,23 +52,8 @@ class Clustering:
                 self.__algorithm.linkage_matrix, self.__dataset_name)
 
     def score(self):
-        scorer = Scorer(self.__data_loader.data[0], self.__algorithm.predicted_labels, self.__data_loader.data[1])
+        scorer = Scorer(self.__data_loader.data[0], self.__algorithm.predicted_labels,
+                        self.__data_loader.data[1])
         scorer.within_cluster_variation()
         scorer.rand_index()
         scorer.purity()
-
-def main():
-    #clustering = Clustering('iris', 'gaussian mixture')
-    #clustering.train()
-    #clustering.visualize_result()
-    #clustering.score()
-
-    #data_loader = DataLoader('iris')
-    #optimizer = Optimizer('kmeans', data_loader.data[0], data_loader.data[1], 'wss')
-    #optimizer.optimize()
-    kmeans = KMeans([], [])
-    print(kmeans)
-
-
-if __name__ == '__main__':
-    main()

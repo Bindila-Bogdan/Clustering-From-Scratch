@@ -1,11 +1,10 @@
-from re import T
 import numpy as np
 from scipy.stats import multivariate_normal
 from clustering_algorithm import ClusteringAlgorithm
 
 
 class GaussianMixture(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, n_clusters=3, max_iter=500) -> None:
+    def __init__(self, coordinates, labels, n_clusters=3, max_iter=500, seed=0) -> None:
         super().__init__()
         self.__coordinates = np.array(coordinates)
         self.__n_clusters = n_clusters
@@ -16,6 +15,7 @@ class GaussianMixture(ClusteringAlgorithm):
         self.__sigma = None
         self.__predicted_labels = None
         self.__labels_evolution = []
+        np.random.seed(seed)
 
     def __initialize_gaussians(self):
         init_value = 1 / self.__n_clusters
@@ -78,8 +78,8 @@ class GaussianMixture(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '*Gaussian mixture*\n'
+        description = '\n*Gaussian mixture*\n'
         description += f'n_clusters: {self.__n_clusters}\n'
-        description += f'max_iter: {self.__max_iter}'
+        description += f'max_iter: {self.__max_iters}\n'
 
         return description

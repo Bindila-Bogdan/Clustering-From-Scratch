@@ -86,7 +86,7 @@ class Agglomerative(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '*Agglomerative*\n'
-        description += f'distance_type: {self.__distance_type}'
+        description = '\n*Agglomerative*\n'
+        description += f'distance_type: {self.__distance_type}\n'
 
         return description

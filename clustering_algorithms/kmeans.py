@@ -101,9 +101,9 @@ class KMeans(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '*KMeans*\n'
+        description = '\n*KMeans*\n'
         description += f'n_clusters: {self.__n_clusters}\n'
         description += f'max_iter: {self.__max_iters}\n'
-        description += f'distance_type: {self.__distance_type}'
+        description += f'distance_type: {self.__distance_type}\n'
 
         return description

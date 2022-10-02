@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 
@@ -21,12 +22,20 @@ class Scorer:
 
     def within_cluster_variation(self):
         wss = 0
+        centroids = []
+
+        if len(set(self.__clusters_labels)) == 0:
+            if self.__display:
+                print('0 clusters')
+            
+            return sys.maxsize
 
         for cluster_label in self.__clusters_labels:
             points = [self.__coordinates[i] for i, value in enumerate(
                 self.__predicted_labels) if value == cluster_label]
 
             centroid = np.array(points).mean(axis=0)
+            centroids.append(centroid)
 
             for point in points:
                 diff = centroid - point
@@ -34,7 +43,19 @@ class Scorer:
 
                 wss += euclidean_dist
 
-        print(f'Within cluster sum of squares: {wss}')
+        for i in range(len(self.__coordinates)):
+            if self.__predicted_labels[i] == -1:
+                min_dist = sys.maxsize
+
+                for centroid in centroids:
+                    diff = centroid - self.__coordinates[i]
+                    euclidean_dist = np.sqrt(np.dot(diff.T, diff))
+                    min_dist = min(min_dist, euclidean_dist)
+
+                wss += min_dist
+
+        if self.__display:
+            print(f'Within cluster sum of squares: {wss}')
 
         return wss
 
@@ -65,7 +86,11 @@ class Scorer:
             agreeing_pairs_no += lables_mapping[index][1][1]
 
         rand_index = agreeing_pairs_no / len(self.__labels)
-        print(f'Rand index: {rand_index}')
+
+        if self.__display:
+            print(f'Rand index: {rand_index}')
+
+        return rand_index
 
     def purity(self):
         if self.__labels is None:
@@ -85,7 +110,10 @@ class Scorer:
 
         purity /= len(self.__labels)
 
-        print(f'Purity: {purity}')
+        if self.__display:
+            print(f'Purity: {purity}')
+
+        return purity
 
     def get_score(self, score_name):
         if score_name == 'wss':
