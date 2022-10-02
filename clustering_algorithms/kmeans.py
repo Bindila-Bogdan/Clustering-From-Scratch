@@ -1,3 +1,4 @@
+from pydoc import describe
 import sys
 import numpy as np
 from copy import deepcopy
@@ -98,3 +99,11 @@ class KMeans(ClusteringAlgorithm):
     @property
     def labels_evolution(self):
         return self.__labels_evolution
+
+    def __str__(self) -> str:
+        description = '*KMeans*\n'
+        description += f'n_clusters: {self.__n_clusters}\n'
+        description += f'max_iter: {self.__max_iters}\n'
+        description += f'distance_type: {self.__distance_type}'
+
+        return description

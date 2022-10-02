@@ -76,3 +76,10 @@ class GaussianMixture(ClusteringAlgorithm):
     @property
     def labels_evolution(self):
         return self.__labels_evolution
+
+    def __str__(self) -> str:
+        description = '*Gaussian mixture*\n'
+        description += f'n_clusters: {self.__n_clusters}\n'
+        description += f'max_iter: {self.__max_iter}'
+
+        return description

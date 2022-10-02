@@ -83,3 +83,11 @@ class DBSCAN(ClusteringAlgorithm):
     @property
     def labels_evolution(self):
         return self.__labels_evolution
+
+    def __str__(self) -> str:
+        description = '*DBSCAN*\n'
+        description += f'epsilon: {self.__epsilon}\n'
+        description += f'min_points: {self.__min_points}\n'
+        description += f'distance_type: {self.__distance_type}'
+
+        return description

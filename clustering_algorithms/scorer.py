@@ -1,14 +1,13 @@
-from msilib.schema import Error
-import re
 import numpy as np
 
 
 class Scorer:
-    def __init__(self, coordinates, predicted_labels, labels=None) -> None:
+    def __init__(self, coordinates, predicted_labels, labels=None, display=True) -> None:
         self.__coordinates = coordinates
         self.__predicted_labels = predicted_labels
         self.__labels = labels
         self.__clusters_labels = self.__get_cluster_labels()
+        self.__display = display
 
     def __get_cluster_labels(self):
         clusters_labels = sorted(list(set(self.__predicted_labels)))
@@ -41,7 +40,7 @@ class Scorer:
 
     def rand_index(self):
         if self.__labels is None:
-            raise Error("Actual labels are not available")
+            raise AttributeError("Actual labels are not available")
 
         lables_mapping = {}
 
@@ -69,6 +68,9 @@ class Scorer:
         print(f'Rand index: {rand_index}')
 
     def purity(self):
+        if self.__labels is None:
+            raise AttributeError("Actual labels are not available")
+
         purity = 0
 
         for cluster_label in self.__clusters_labels:
@@ -84,3 +86,11 @@ class Scorer:
         purity /= len(self.__labels)
 
         print(f'Purity: {purity}')
+
+    def get_score(self, score_name):
+        if score_name == 'wss':
+            return self.within_cluster_variation()
+        elif score_name == 'rand index':
+            return self.rand_index()
+        elif score_name == 'purity':
+            return self.purity()

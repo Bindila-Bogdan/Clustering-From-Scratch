@@ -1,10 +1,12 @@
 from dbscan import DBSCAN
 from kmeans import KMeans
 from agglomerative import Agglomerative
+from gaussian_mixture import GaussianMixture
 from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
 from scorer import Scorer
+from optimizer import Optimizer
 
 
 class Clustering:
@@ -23,6 +25,8 @@ class Clustering:
             algorithm = DBSCAN(*self.__data_loader.data)
         elif self.__algorithm_name == 'agglomerative':
             algorithm = Agglomerative(*self.__data_loader.data)
+        elif self.__algorithm_name == 'gaussian mixture':
+            algorithm = GaussianMixture(*self.__data_loader.data)
         else:
             raise NameError('clustering algorithm not found')
 
@@ -51,10 +55,16 @@ class Clustering:
         scorer.purity()
 
 def main():
-    clustering = Clustering('iris', 'dbscan')
-    clustering.train()
+    #clustering = Clustering('iris', 'gaussian mixture')
+    #clustering.train()
     #clustering.visualize_result()
-    clustering.score()
+    #clustering.score()
+
+    #data_loader = DataLoader('iris')
+    #optimizer = Optimizer('kmeans', data_loader.data[0], data_loader.data[1], 'wss')
+    #optimizer.optimize()
+    kmeans = KMeans([], [])
+    print(kmeans)
 
 
 if __name__ == '__main__':
