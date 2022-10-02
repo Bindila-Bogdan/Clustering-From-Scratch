@@ -8,9 +8,8 @@ from data_loader import DataLoader
 from visualizer import Visualizer
 from data_viz_preparation import DataVizPreparation
 
-
 class KMeans(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, n_clusters=3, max_iter=100, distance_type='euclidean') -> None:
+    def __init__(self, coordinates, labels, n_clusters=10, max_iter=100, distance_type='euclidean') -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
@@ -35,7 +34,7 @@ class KMeans(ClusteringAlgorithm):
 
                 for centroid in centroids:
                     min_dist = min(
-                        min_dist, super().compute_dist(coordinates[i, :], centroid), self.__distance_type)
+                        min_dist, super().compute_dist(coordinates[i, :], centroid, self.__distance_type))
 
                 dist_distrib.append(min_dist)
 
@@ -91,9 +90,6 @@ class KMeans(ClusteringAlgorithm):
             iter_no += 1
 
         self.__predicted_labels = points_class
-
-    def score(self, scorer):
-        return super().score(scorer)
 
     @property
     def predicted_labels(self):

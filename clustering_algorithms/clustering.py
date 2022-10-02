@@ -4,6 +4,7 @@ from agglomerative import Agglomerative
 from visualizer import Visualizer
 from data_loader import DataLoader
 from data_viz_preparation import DataVizPreparation
+from scorer import Scorer
 
 
 class Clustering:
@@ -43,10 +44,17 @@ class Clustering:
             Visualizer.plot_dendrogram(
                 self.__algorithm.linkage_matrix, self.__dataset_name)
 
+    def score(self):
+        scorer = Scorer(self.__data_loader.data[0], self.__algorithm.predicted_labels, self.__data_loader.data[1])
+        scorer.within_cluster_variation()
+        scorer.rand_index()
+        scorer.purity()
+
 def main():
-    clustering = Clustering('iris', 'agglomerative')
+    clustering = Clustering('iris', 'dbscan')
     clustering.train()
-    clustering.visualize_result()
+    #clustering.visualize_result()
+    clustering.score()
 
 
 if __name__ == '__main__':

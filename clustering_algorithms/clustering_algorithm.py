@@ -10,11 +10,6 @@ class ClusteringAlgorithm(ABC):
     def fit_transform(self):
         pass
 
-    # TODO: impute the scoring method
-    @abstractmethod
-    def score(self, scorer):
-        pass
-
     def __compute_euclidean_dist(self, point_a, point_b):
         diff = point_a - point_b
         sum_of_squares = np.dot(diff.T, diff)
@@ -43,7 +38,7 @@ class ClusteringAlgorithm(ABC):
 
         return pearson_corr_dist
 
-    def __compute_dist(self, point_a, point_b, distance_type='euclidean'):
+    def compute_dist(self, point_a, point_b, distance_type='euclidean'):
         if distance_type == 'manhattan':
             return self.__compute_manhattan_dist(point_a, point_b)
         elif distance_type == 'cosine_similarity':
