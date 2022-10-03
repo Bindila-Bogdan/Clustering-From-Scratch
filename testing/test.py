@@ -6,7 +6,7 @@ from kmeans import KMeans
 from scorer import Scorer
 from sklearn.cluster import KMeans as KMeansScikit
 
-def test_wss_metric():
+def test_kmeans_wss():
     data_loader = DataLoader('iris')
     coordinates, labels = data_loader.data
 
@@ -24,8 +24,7 @@ def test_wss_metric():
     scikit_wss_manually_computed = scorer.get_score('wss')
     
     metrics_ratio = wss_manually_computed / scikit_wss_manually_computed
+    print(f'WSS KMeans from scratch: {wss_manually_computed}')
+    print(f'WSS Scikit-Learn KMeans: {scikit_wss_manually_computed}')
 
     assert 0.99 < metrics_ratio < 1.01
-
-if __name__ == '__main__':
-    test_wss_metric()
