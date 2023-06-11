@@ -30,3 +30,7 @@ def test_kmeans_wss():
     print(f"WSS Scikit-Learn KMeans: {scikit_wss_manually_computed}")
 
     assert 0.99 < metrics_ratio < 1.01
+
+
+if __name__ == "__main__":
+    test_kmeans_wss()
