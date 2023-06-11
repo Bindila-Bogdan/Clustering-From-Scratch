@@ -5,7 +5,7 @@ from clustering_algorithm import ClusteringAlgorithm
 
 
 class Agglomerative(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, distance_type='euclidean') -> None:
+    def __init__(self, coordinates, labels, distance_type="euclidean") -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
@@ -20,8 +20,7 @@ class Agglomerative(ClusteringAlgorithm):
         self.__centroids = []
 
         for cluster in self.__clusters:
-            centroid = np.array([self.__coordinates[i]
-                                for i in cluster]).mean(axis=0)
+            centroid = np.array([self.__coordinates[i] for i in cluster]).mean(axis=0)
             self.__centroids.append(centroid)
 
     def __get_closest_clusters(self):
@@ -35,7 +34,9 @@ class Agglomerative(ClusteringAlgorithm):
 
                 centorid_i = self.__centroids[i]
                 centroid_j = self.__centroids[j]
-                dist = super().compute_dist(centorid_i, centroid_j, self.__distance_type)
+                dist = super().compute_dist(
+                    centorid_i, centroid_j, self.__distance_type
+                )
                 if dist < min_dist:
                     min_dist = dist
                     closest_clusters = [i, j]
@@ -86,7 +87,7 @@ class Agglomerative(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '\n*Agglomerative*\n'
-        description += f'distance_type: {self.__distance_type}\n'
+        description = "\n*Agglomerative*\n"
+        description += f"distance_type: {self.__distance_type}\n"
 
         return description

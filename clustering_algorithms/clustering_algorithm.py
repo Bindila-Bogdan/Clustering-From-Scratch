@@ -1,8 +1,9 @@
 import numpy as np
 import sys
 from abc import ABC, abstractmethod
-sys.path.append('../data_preprocessing')
-sys.path.append('../data_visualization')
+
+sys.path.append("../data_preprocessing")
+sys.path.append("../data_visualization")
 
 
 class ClusteringAlgorithm(ABC):
@@ -38,12 +39,12 @@ class ClusteringAlgorithm(ABC):
 
         return pearson_corr_dist
 
-    def compute_dist(self, point_a, point_b, distance_type='euclidean'):
-        if distance_type == 'manhattan':
+    def compute_dist(self, point_a, point_b, distance_type="euclidean"):
+        if distance_type == "manhattan":
             return self.__compute_manhattan_dist(point_a, point_b)
-        elif distance_type == 'cosine_similarity':
+        elif distance_type == "cosine_similarity":
             return self.__compute_cosine_similarity_dist(point_a, point_b)
-        elif distance_type == 'pearson_correlation':
+        elif distance_type == "pearson_correlation":
             return self.__compute_pearson_corr_dist(point_a, point_b)
         else:
             return self.__compute_euclidean_dist(point_a, point_b)

@@ -14,13 +14,12 @@ class DataVizPreparation:
 
         for i in range(iter_no):
             current_data = deepcopy(data)
-            current_data['class'] = model.labels_evolution[i]
-            current_data['iteration'] = iteration_index[i]
+            current_data["class"] = model.labels_evolution[i]
+            current_data["iteration"] = iteration_index[i]
 
             if clusters_evolution is None:
                 clusters_evolution = current_data
             else:
-                clusters_evolution = pd.concat(
-                    [clusters_evolution, current_data])
+                clusters_evolution = pd.concat([clusters_evolution, current_data])
 
         return clusters_evolution

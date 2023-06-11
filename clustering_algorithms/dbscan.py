@@ -8,7 +8,9 @@ from data_viz_preparation import DataVizPreparation
 
 
 class DBSCAN(ClusteringAlgorithm):
-    def __init__(self, coordinates, labels, epsilon=0.5, min_points=3, distance_type='euclidean') -> None:
+    def __init__(
+        self, coordinates, labels, epsilon=0.5, min_points=3, distance_type="euclidean"
+    ) -> None:
         super().__init__()
         self.__coordinates = coordinates
         self.__labels = labels
@@ -26,7 +28,9 @@ class DBSCAN(ClusteringAlgorithm):
             if i == current_index:
                 continue
 
-            dist = super().compute_dist(point, self.__coordinates[i], self.__distance_type)
+            dist = super().compute_dist(
+                point, self.__coordinates[i], self.__distance_type
+            )
 
             if dist < self.__epsilon:
                 neighbours = np.append(neighbours, i)
@@ -85,9 +89,9 @@ class DBSCAN(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '\n*DBSCAN*\n'
-        description += f'epsilon: {self.__epsilon}\n'
-        description += f'min_points: {self.__min_points}\n'
-        description += f'distance_type: {self.__distance_type}\n'
+        description = "\n*DBSCAN*\n"
+        description += f"epsilon: {self.__epsilon}\n"
+        description += f"min_points: {self.__min_points}\n"
+        description += f"distance_type: {self.__distance_type}\n"
 
         return description

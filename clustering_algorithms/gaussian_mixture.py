@@ -22,11 +22,11 @@ class GaussianMixture(ClusteringAlgorithm):
         self.__cluster_weights = np.full(self.__n_clusters, init_value)
         self.__points_weights = np.full(self.__coordinates.shape, init_value)
 
-        indices = np.random.randint(low=0, high=len(
-            self.__coordinates), size=self.__n_clusters)
+        indices = np.random.randint(
+            low=0, high=len(self.__coordinates), size=self.__n_clusters
+        )
         self.__mu = [self.__coordinates[i] for i in indices]
-        self.__sigma = [np.cov(self.__coordinates.T)
-                        for _ in range(self.__n_clusters)]
+        self.__sigma = [np.cov(self.__coordinates.T) for _ in range(self.__n_clusters)]
 
     def __expectation(self):
         likelihood = np.zeros((len(self.__coordinates), self.__n_clusters))
@@ -50,8 +50,11 @@ class GaussianMixture(ClusteringAlgorithm):
             self.__mu[i] = (self.__coordinates * weights).sum(axis=0)
             self.__mu[i] /= weigths_sum
 
-            self.__sigma[i] = np.cov(self.__coordinates.T, aweights=(
-                weights/weigths_sum).flatten(), bias=True)
+            self.__sigma[i] = np.cov(
+                self.__coordinates.T,
+                aweights=(weights / weigths_sum).flatten(),
+                bias=True,
+            )
 
     def fit_transform(self):
         self.__initialize_gaussians()
@@ -78,8 +81,8 @@ class GaussianMixture(ClusteringAlgorithm):
         return self.__labels_evolution
 
     def __str__(self) -> str:
-        description = '\n*Gaussian mixture*\n'
-        description += f'n_clusters: {self.__n_clusters}\n'
-        description += f'max_iter: {self.__max_iters}\n'
+        description = "\n*Gaussian mixture*\n"
+        description += f"n_clusters: {self.__n_clusters}\n"
+        description += f"max_iter: {self.__max_iters}\n"
 
         return description

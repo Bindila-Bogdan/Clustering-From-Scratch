@@ -3,7 +3,9 @@ import numpy as np
 
 
 class Scorer:
-    def __init__(self, coordinates, predicted_labels, labels=None, display=True) -> None:
+    def __init__(
+        self, coordinates, predicted_labels, labels=None, display=True
+    ) -> None:
         self.__coordinates = coordinates
         self.__predicted_labels = predicted_labels
         self.__labels = labels
@@ -26,13 +28,16 @@ class Scorer:
 
         if len(set(self.__clusters_labels)) == 0:
             if self.__display:
-                print('0 clusters')
-            
+                print("0 clusters")
+
             return sys.maxsize
 
         for cluster_label in self.__clusters_labels:
-            points = [self.__coordinates[i] for i, value in enumerate(
-                self.__predicted_labels) if value == cluster_label]
+            points = [
+                self.__coordinates[i]
+                for i, value in enumerate(self.__predicted_labels)
+                if value == cluster_label
+            ]
 
             centroid = np.array(points).mean(axis=0)
             centroids.append(centroid)
@@ -55,7 +60,7 @@ class Scorer:
                 wss += min_dist
 
         if self.__display:
-            print(f'Within cluster sum of squares: {wss}')
+            print(f"Within cluster sum of squares: {wss}")
 
         return wss
 
@@ -73,11 +78,11 @@ class Scorer:
                     actual_labels.append(self.__labels[i])
 
             most_freq = max(set(actual_labels), key=actual_labels.count)
-            lables_mapping[cluster_label] = [
-                most_freq, actual_labels.count(most_freq)]
+            lables_mapping[cluster_label] = [most_freq, actual_labels.count(most_freq)]
 
-        lables_mapping = sorted(lables_mapping.items(),
-                                key=lambda x: x[1][1], reverse=True)
+        lables_mapping = sorted(
+            lables_mapping.items(), key=lambda x: x[1][1], reverse=True
+        )
 
         agreeing_pairs_no = 0
         max_value = min(len(set(self.__labels)), len(self.__clusters_labels))
@@ -88,7 +93,7 @@ class Scorer:
         rand_index = agreeing_pairs_no / len(self.__labels)
 
         if self.__display:
-            print(f'Rand index: {rand_index}')
+            print(f"Rand index: {rand_index}")
 
         return rand_index
 
@@ -111,14 +116,14 @@ class Scorer:
         purity /= len(self.__labels)
 
         if self.__display:
-            print(f'Purity: {purity}')
+            print(f"Purity: {purity}")
 
         return purity
 
     def get_score(self, score_name):
-        if score_name == 'wss':
+        if score_name == "wss":
             return self.within_cluster_variation()
-        elif score_name == 'rand index':
+        elif score_name == "rand index":
             return self.rand_index()
-        elif score_name == 'purity':
+        elif score_name == "purity":
             return self.purity()

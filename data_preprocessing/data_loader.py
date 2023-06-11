@@ -14,11 +14,10 @@ class DataLoader:
         label = data[data.columns[-1]]
 
         std_scaler = StandardScaler()
-        std_data_ = std_scaler.fit_transform(
-            data.drop(data.columns[-1], axis=1))
+        std_data_ = std_scaler.fit_transform(data.drop(data.columns[-1], axis=1))
 
         std_data = pd.DataFrame(std_data_)
-        std_data['class'] = label
+        std_data["class"] = label
         del std_data_
 
         return std_data
@@ -30,13 +29,13 @@ class DataLoader:
         reduced_data_ = pca.fit_transform(data.drop(data.columns[-1], axis=1))
 
         reduced_data = pd.DataFrame(reduced_data_)
-        reduced_data['class'] = label
+        reduced_data["class"] = label
         del reduced_data_
 
         return reduced_data
 
     def __load_data(self):
-        data_path = f'../datasets/{self.__dataset_name}.csv'
+        data_path = f"../datasets/{self.__dataset_name}.csv"
         data = pd.read_csv(data_path, low_memory=False, index_col=0)
         data = data.reset_index()
 
@@ -48,16 +47,15 @@ class DataLoader:
         else:
             data_2d = self.__standardize_data(self.__data)
 
-        data_2d.columns = ['first dimension', 'second dimension', 'class']
+        data_2d.columns = ["first dimension", "second dimension", "class"]
 
         return data_2d
 
     def display_dataset(self):
-        print(f'{self.__dataset_name} dataset')
+        print(f"{self.__dataset_name} dataset")
 
         if self.__data.shape[1] > 3:
-            print(
-                f'Original version: {self.__data}\n2D version: {self.__data_2d}')
+            print(f"Original version: {self.__data}\n2D version: {self.__data_2d}")
         else:
             print(self.__data)
 
